@@ -1,0 +1,59 @@
+﻿@model DriveNow.MVC.Models.LocacaoView
+
+<div class="container mt-4">
+    <h2>Efetuar Nova Locação</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label class="control-label">Cliente</label>
+                    <select asp-for="ClienteId" class="form-control" asp-items="ViewBag.ClienteId">
+                        <option value="">-- Selecione o Cliente --</option>
+                    </select>
+                    <span asp-validation-for="ClienteId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="control-label">Veículo</label>
+                    <select asp-for="VeiculoId" class="form-control" asp-items="ViewBag.VeiculoId">
+                        <option value="">-- Selecione o Veículo --</option>
+                    </select>
+                    <span asp-validation-for="VeiculoId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="DataRetirada" class="control-label">Data de Retirada</label>
+                    <input asp-for="DataRetirada" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="DataRetirada" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="DataDevolucao" class="control-label">Data de Devolução</label>
+                    <input asp-for="DataDevolucao" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="DataDevolucao" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label asp-for="ValorTotal" class="control-label">Valor Total (R$)</label>
+                    <input asp-for="ValorTotal" class="form-control" type="number" step="0.01" />
+                    <span asp-validation-for="ValorTotal" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Confirmar Locação</button>
+                    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

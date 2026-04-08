@@ -3,6 +3,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddHttpClient("DriveNow.API", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7242");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
