@@ -13,6 +13,7 @@
                     <label class="control-label">Cliente</label>
                     <select asp-for="ClienteId" class="form-control" asp-items="ViewBag.ClienteId">
                         <option value="">-- Selecione o Cliente --</option>
+                        <option value=""></option>
                     </select>
                     <span asp-validation-for="ClienteId" class="text-danger"></span>
                 </div>
@@ -21,6 +22,7 @@
                     <label class="control-label">Veículo</label>
                     <select asp-for="VeiculoId" class="form-control" asp-items="ViewBag.VeiculoId">
                         <option value="">-- Selecione o Veículo --</option>
+                        <option value=""></option>
                     </select>
                     <span asp-validation-for="VeiculoId" class="text-danger"></span>
                 </div>

@@ -1,106 +1,69 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DriveNow.MVC.Models;
-
-public class CadastroController : Controller
+public class CadastrosController : Controller
 {
-    private readonly HttpClient _httpClient;
-    
-    private readonly string _baseUrl = "https://localhost:7189";
+    private readonly IHttpClientFactory _clientFactory;
 
-    public CadastroController(IHttpClientFactory httpClientFactory)
+    public CadastrosController(IHttpClientFactory clientFactory)
     {
-        _httpClient = httpClientFactory.CreateClient();
+        _clientFactory = clientFactory;
     }
 
-    // --- CLIENTES ---
-    public IActionResult NovoCliente() => View();
-
-    //[HttpPost]
-    //public async Task<IActionResult> NovoCliente(ClienteView cliente)
-    //{
-    //    var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}clientes", cliente);
-    //    if (response.IsSuccessStatusCode) return RedirectToAction("Sucesso");
-    //    return View(cliente);
-    //}
-
-    //// --- VEÍCULOS ---
-    //public IActionResult NovoVeiculo() => View();
-
-    //[HttpPost]
-    //public async Task<IActionResult> NovoVeiculo(VeiculoView veiculo)
-    //{
-    //    var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}veiculos", veiculo);
-    //    if (response.IsSuccessStatusCode) return RedirectToAction("Sucesso");
-    //    return View(veiculo);
-    //}
-
-    //// --- LOCAÇÕES ---
-    //public IActionResult NovaLocacao() => View();
-
-    //[HttpPost]
-    //public async Task<IActionResult> NovaLocacao(LocacaoView locacao)
-    //{
-    //    var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}locacoes", locacao);
-    //    if (response.IsSuccessStatusCode) return RedirectToAction("Sucesso");
-    //    return View(locacao);
-    //}
-
-    //public IActionResult Sucesso() => Content("Cadastro realizado com sucesso!");
-
-    [HttpPost]
-    public async Task<IActionResult> NovoCliente(ClienteView cliente)
+    public IActionResult Index()
     {
-        if (!ModelState.IsValid) return View(cliente);
-
-        using (var content = new MultipartFormDataContent())
-        {
-            // Adiciona os campos de texto
-            content.Add(new StringContent(cliente.Nome ?? ""), "Nome");
-            content.Add(new StringContent(cliente.Email ?? ""), "Email");
-            content.Add(new StringContent(cliente.Cpf.ToString()), "Cpf");
-
-            // Adiciona o arquivo (Foto)
-            if (cliente.FotoUploadCliente != null)
-            {
-                var fileStream = cliente.FotoUploadCliente.OpenReadStream();
-                var fileContent = new StreamContent(fileStream);
-                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(cliente.FotoUploadCliente.ContentType);
-                content.Add(fileContent, "FotoUploadCliente", cliente.FotoUploadCliente.FileName);
-            }
-
-            var response = await _httpClient.PostAsync($"{_baseUrl}/clientes", content);
-
-            if (response.IsSuccessStatusCode) return RedirectToAction("Sucesso");
-        }
-
-        return View(cliente);
+        return View();
     }
 
+    // --- CREATE VEÍCULO (Com Upload) ---
     [HttpPost]
-    public async Task<IActionResult> NovoVeiculo(VeiculoView veiculo)
+    public async Task<IActionResult> NovoVeiculo(VeiculoView model)
     {
-        if (!ModelState.IsValid) return View(veiculo);
+        var client = _clientFactory.CreateClient("DriveNow.API");
+        using var content = new MultipartFormDataContent();
 
-        using (var content = new MultipartFormDataContent())
+        // Campos de texto (precisam ter o mesmo nome que a API espera no objeto)
+        content.Add(new StringContent(model.Modelo ?? ""), "Modelo");
+        content.Add(new StringContent(model.Placa ?? ""), "Placa");
+        content.Add(new StringContent(model.ValorDiaria.ToString()), "ValorDiaria");
+        content.Add(new StringContent(model.AgenciaId.ToString()), "AgenciaId");
+
+        // Envio do arquivo binário
+        if (model.FotoUploadVeiculo != null)
         {
-            content.Add(new StringContent(veiculo.Modelo ?? ""), "Modelo");
-            content.Add(new StringContent(veiculo.Placa ?? ""), "Placa");
-            content.Add(new StringContent(veiculo.ValorDiaria.ToString()), "ValorDiaria");
-            content.Add(new StringContent(veiculo.AgenciaNome ?? ""), "AgenciaNome");
-
-            if (veiculo.FotoUploadVeiculo != null)
-            {
-                var fileStream = veiculo.FotoUploadVeiculo.OpenReadStream();
-                var fileContent = new StreamContent(fileStream);
-                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(veiculo.FotoUploadVeiculo.ContentType);
-                content.Add(fileContent, "FotoUploadVeiculo", veiculo.FotoUploadVeiculo.FileName);
-            }
-
-            var response = await _httpClient.PostAsync($"{_baseUrl}/veiculos", content);
-
-            if (response.IsSuccessStatusCode) return RedirectToAction("Sucesso");
+            var stream = model.FotoUploadVeiculo.OpenReadStream();
+            var fileContent = new StreamContent(stream);
+            content.Add(fileContent, "FotoUploadVeiculo", model.FotoUploadVeiculo.FileName);
         }
 
-        return View(veiculo);
+        var response = await client.PostAsync("api/veiculos", content);
+
+        if (response.IsSuccessStatusCode) return RedirectToAction("Index", "Home");
+
+        return View(model);
+    }
+
+    // --- CREATE CLIENTE (Com Upload) ---
+    [HttpPost]
+    public async Task<IActionResult> NovoCliente(ClienteView model)
+    {
+        var client = _clientFactory.CreateClient("DriveNow.API");
+        using var content = new MultipartFormDataContent();
+
+        content.Add(new StringContent(model.Nome ?? ""), "Nome");
+        content.Add(new StringContent(model.Email ?? ""), "Email");
+        content.Add(new StringContent(model.Cpf ?? ""), "Cpf");
+
+        if (model.FotoUploadCliente != null)
+        {
+            var stream = model.FotoUploadCliente.OpenReadStream();
+            var fileContent = new StreamContent(stream);
+            content.Add(fileContent, "FotoUploadCliente", model.FotoUploadCliente.FileName);
+        }
+
+        var response = await client.PostAsync("api/clientes", content);
+
+        if (response.IsSuccessStatusCode) return RedirectToAction("Index", "Home");
+
+        return View(model);
     }
 }
