@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DriveNow.MVC.Models
 {
@@ -12,5 +13,11 @@ namespace DriveNow.MVC.Models
 
         [Required(ErrorMessage = "CPF obrigatório")]
         public string? Cpf { get; set; }
+
+        public string? FotoUrlCliente { get; set; } // Propriedade para armazenar a URL da foto do pet no banco de dados
+
+        [NotMapped] // This property is not mapped to the database
+        public IFormFile FotoUploadCliente { get; set; } // Aparece na View, mas não é armazenada no banco
+
     }
 }

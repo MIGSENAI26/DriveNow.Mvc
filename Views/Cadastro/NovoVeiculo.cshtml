@@ -1,0 +1,50 @@
+﻿@model DriveNow.MVC.Models.VeiculoView
+
+@{
+	ViewData["Title"] = "Criar";
+}
+
+<div class="container" mt-5>
+	<div class="card shadow-sm p-4">
+		<h2 class="text-primary">Cadastro de Veiculos</h2>
+		<hr />
+
+		<form asp-action="NovoVeiculo" method="post" enctype="multipart/form-data">
+			<div class="row">
+				<div class="col-md-6 mb-3">
+					<label asp-for="Modelo" class="form-label">Modelo</label>
+					<input asp-for="Modelo" class="form-control" />
+					<span asp-validation-for="Modelo" class="text-danger"></span>
+				</div>
+
+				<div class="col-md-6 mb-3">
+					<label asp-for="Placa" class="form-label">Placa</label>
+					<input asp-for="Placa" class="form-control" />
+					<span asp-validation-for="Placa" class="text-danger"></span>
+				</div>
+
+				<div class="col-md-4 mb-3">
+					<label asp-for="ValorDiaria" class="form-label">Valor da Diaria</label>
+					<input asp-for="ValorDiaria" type="number" class="form-control" />
+					<span asp-validation-for="ValorDiaria" class="text-danger"></span>
+				</div>
+
+				<div class="col-md-6 mb-3">
+					<label asp-for="AgenciaNome" class="form-label">Nome da Agencia</label>
+					<input asp-for="AgenciaNome" class="form-control" />
+					<span asp-validation-for="AgenciaNome" class="text-danger"></span>
+				</div>
+
+				<div class="col-md-8 mb-3">
+					<label asp-for="FotoUploadVeiculo" class="form-label">Foto do Veículo</label>
+					<input asp-for="FotoUploadVeiculo" type="file" class="form-control" accept="image/*" />
+				</div>
+
+				<div class="mb-3">
+					<button type="submit" class="btn btn-primary">Salvar Veículo</button>
+					<a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
