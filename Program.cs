@@ -5,7 +5,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient("DriveNow.API", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7242");
+    client.BaseAddress = new Uri("https://localhost:7189");
 });
 
 var app = builder.Build();
